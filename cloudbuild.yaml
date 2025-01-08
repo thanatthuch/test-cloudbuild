@@ -1,0 +1,24 @@
+steps:
+  # ขั้นตอนติดตั้ง dependencies ด้วย pip
+  - name: python:3.9.6
+    entrypoint: 'pip'
+    args: ['install', '-r', 'requirements.txt']
+
+  # ขั้นตอนสร้าง Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/coral-pipe-447103-u7/artifact-sink-fail-test/my-image:latest' # เพิ่มชื่อ image ที่ชัดเจน
+      - '.'  # ไดเรกทอรีที่มี Dockerfile
+
+  # ขั้นตอน push Docker image ไปยัง Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'us-central1-docker.pkg.dev/coral-pipe-447103-u7/artifact-sink-fail-test/my-image:latest'  # ใช้ชื่อ image ที่เดียวกัน
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: 1200s
